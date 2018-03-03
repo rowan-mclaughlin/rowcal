@@ -13,8 +13,11 @@ rowcal operates in the R environment. To use it, you need to install R and the p
 
 ### Installing
 
-To install rowcal, copy the script rowcal.r to your working directory and type 'source rowcal.r'
+To install rowcal, copy the script rowcal.r to your working directory and type 
 
+```
+source 'rowcal.r'
+```
 ## Calibrating a date
 
 
