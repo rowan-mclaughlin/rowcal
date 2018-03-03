@@ -28,7 +28,8 @@ The object 'cal' can be visualised or summarised thus:
 
 ```
 plot(cal)
-
+spansc14(cal)
+```
 
 ### Calculating a KDE for a set of radiocarbon dates
 
