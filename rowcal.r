@@ -3,32 +3,49 @@
 #   Utilities for radiocarbon age calibration in R
 #   by T. Rowan McLaughlin email : r.mclaughlin@qub.ac.uk
 
-#   Please cite McLaughlin, T. R. Submitted. On applications of space-time modelling with open-source 14C age calibration. Journal of Archaeological Method and Theory
+#   Please cite McLaughlin, T. R. 2018. On applications of space-time modelling with open-source 14C age calibration. Journal of Archaeological Method and Theory
 
 intcal<-read.csv("rowcal/intcal13.14c",header=FALSE,skip=11)
 marine<-read.csv("rowcal/marine13.14c",header=FALSE,skip=11)
 colnames(intcal)<-c("calBP","14Cage","Error","Delta14C","Sigma")
 colnames(marine)<-c("calBP","14Cage","Error","Delta14C","Sigma")
 
-rowcal<-function(date, sigma, calcurve=intcal, BC=TRUE) {
+rowcal<-function(date, sigma, calcurve=intcal, BC=TRUE, norm=TRUE) {
     curve<-calcurve[(calcurve[,2]<= (date+(sigma*4)) & calcurve[,2]>= (date-(sigma*4)) ),]
 	
 	#convert from cal. BP to cal. BC if required
-    if (BC==TRUE) curve$calBP<-1950-curve$calBP
+    if(BC==TRUE) curve$calBP<-1950-curve$calBP
     
     #build an output table
     calibrated<-as.matrix(curve[,1:2]) 
-    if (BC==TRUE) colnames(calibrated)<-c("Cal. BC/AD","Relative p") else colnames(calibrated)<-c("Cal. BP","Relative p")
+    if(BC==TRUE) colnames(calibrated)<-c("Cal. BC/AD","Relative p") else colnames(calibrated)<-c("Cal. BP","Relative p")
     
     #apply the normal distribution function to each margin of the calibration curve and average
     H<-dnorm(curve[,2]+curve[,3],mean=date,sd=sigma)
     L<-dnorm(curve[,2]-curve[,3],mean=date,sd=sigma)
-    ol<-length(curve[,1])
-    Res<-((curve[,1]-curve[1,1])/ol-1)[ol]
-    calibrated[,2]<-(H+L)/2/Res/sum((H+L)/2)
+    M<-(H+L)/2
+    Res<-abs(mean(diff(curve[,1])))
+    if(norm==TRUE) calibrated[,2]<-(M/sum(M))/Res else calibrated[,2]<-M/Res
     calibrated
 }
 
+#   Function for mixing curves, or applying local delta-R corrections, or both
+
+mixcurves<-function(mix=0.5, uncert=0, c1=intcal, c2=marine, delR=0, error_delR=0) {
+	# First interpolate so that the two curves have the same calendar years
+	c2y<-approx(c2[,1], c2[,2], c1[,1], rule=2)$y
+	c2e<-approx(c2[,1], c2[,3], c1[,1], rule=2)$y
+	
+	# Apply delta-R if so required
+	c2y<-c2y+delR
+	c2e<-sqrt(c2e^2 + error_delR^2) 
+	
+	# Perform curve mixing 
+	out<-c1[,1:3] 
+    out[,2] <- (1-mix)*c1[,2] + mix * c2y 
+    out[,3] <- sqrt(((1-mix)*c1[,3])^2 + (mix*c2e)^2 + (uncert * (c1[,3]-c2e))^2)
+    return(out)
+}
 
 #____________________________________________________________________________________
 #
@@ -55,6 +72,56 @@ rowcalsam<-function(date, sigma, N=1, ...) {
   random.points
 }
 
+#function to make, from the gamma distribution, sapwood estimates or anything else with a gamma distro
+sap<-function(date, sigma, shape=sigma, scale=3, N=1, ...) {
+	g<-matrix(nrow=201,ncol=2)
+	g[,1]<-seq(date-sigma,date-sigma+100,0.5)
+	g[,2]<-dgamma(c(1:201),shape=shape, scale=scale, ...)
+	g
+}
+
+
+#function to sample from sapwood estimates, like rowcalsam
+sapsam<-function(date, sigma, N=1, ...) {
+	g<-sap(date, sigma, ...)
+  	random.points <- approx(cumsum(g[,2])/sum(g[,2]),g[,1],runif(N))$y
+  	random.points
+}
+
+#function to make a normal distribution of calendar dates
+calen<-function(date, sigma, sigmas=2, res=(if(sigma<5) 0.1 else 1)) {
+	x<-seq(date-sigmas*sigma,date+sigmas*sigma,res)
+	g<-matrix(nrow=length(x),ncol=2)
+	g[,1]<-x
+	g[,2]<-dnorm(x,mean=date,sd=sigma)
+	g
+}
+	
+#function to sample from calendar dates, like rowcalsam
+calsam<-function(date, sigma, N=1, ...) {
+	g<-calen(date, sigma, ...)
+	random.points <- approx(cumsum(g[,2])/sum(g[,2]),g[,1],runif(N))$y
+  	random.points
+}
+
+#function to turn a three-column list of dates into a list of one sample per date
+#third column must be the name of the calibration curve, or 'cal' meaning calendar, 'sap' for sapwood
+MCmix<-function(L) {
+	colnames(L)<-c('date','error','cc')
+	spp<-L[L$cc=='sap',]; cal<-L[L$cc=='cal',]
+	cal_points<-c(); sap_points<-c()
+	if(nrow(spp)>0) sap_points<-apply(spp[,c('date','error')],1,function(rdate,...) sapsam(rdate['date'],rdate['error'],...) )
+	if(nrow(cal)>0) cal_points<-apply(cal[,c('date','error')],1,function(rdate,...) calsam(rdate['date'],rdate['error'],...) )
+    C14_points<-c()
+    C14<-L[!(L$cc %in% c('sap','cal')),]
+    if(nrow(C14)>0) {
+    # I know this is as ugly as sin, but it works
+	for (N in 1:length(C14[,1])) 
+		C14_points[N]<-eval(parse(text=paste("rowcalsam(",C14[N,1],",",C14[N,2],",calcurve=",as.character(C14[N,3]),")",sep='')))
+	}
+	return(as.vector(c(cal_points,sap_points,C14_points)))
+}	
+	
 #function to turn a two-column list of uncalibrated dates into list of one sample per date
 MCsam<-function(L,...) {
    colnames(L)<-c('BP','SD')
@@ -116,18 +183,51 @@ MCdensity<-function(DATA=CLIP(),N=100,perm_runs=1, perm_size=1, col=rgb(0,0,0,0.
 	if (plot.new) {add<-TRUE; plot(d,col=col,...)}
 	x1<-min(round(d$x)); x2<-max(round(d$x)); n=d$n
     out<-matrix(nrow = 512, ncol = N*perm_runs+1); out[,1]<-d$x; out[,2]<-d$y; P<-0
-	pb <- txtProgressBar(min=2,max=N-1,initial=2)
-	for (run in 2:N-1) {
-		P<-P+1
-		if (perm_runs>1 & perm_size<1) DATA<-oDATA[sample(1:nrow(oDATA),round(perm_size*nrow(oDATA))),]	
-	    d<-density(MCsam(DATA),bw,na.rm=TRUE,from=x1,to=x2,n=512)
-		out[,P+2]<-d$y 
-		if (add & P>2) lines(out[,1],rowMeans(out[,2:P]),col=col)
-		setTxtProgressBar(pb,run)
+	pb <- txtProgressBar(min=2,max=N*perm_runs-1,initial=2)
+	for (perm in 1:perm_runs) {
+	  for (run in 2:N-1) {
+	   	  P<-P+1
+		  if (perm_runs>1 & perm_size<1) DATA<-oDATA[sample(1:nrow(oDATA),round(perm_size*nrow(oDATA))),]	
+	      d<-density(MCsam(DATA),bw,na.rm=TRUE,from=x1,to=x2,n=512)
+		  out[,P+2]<-d$y 
+		  if (add & P>2) lines(out[,1],rowMeans(out[,2:P]),col=col)
+		  setTxtProgressBar(pb,P+1)
+	  }
 	}
 	close(pb)
 	class(out)='MCd'; return(out)
 }
+
+# Function for calculating Gaussian KDE of set of dates using a Monte Carlo method, with output data allowing summary stats
+# differs from MCdensity in that there should be three input columns, specifying date, error, and curve
+# curve can be intcal, or any intcal-like object (marine)
+# alternatively, curve can be 'sap' for sapwood models, or 'cal' for calendar years
+mixdensity<-function(DATA=CLIP(),N=100,perm_runs=1, perm_size=1, col=rgb(0,0,0,0.01),plot.new=FALSE,add=FALSE,bw=30,...) {
+	if (perm_runs==1 & perm_size<1) stop("perm_runs must be specified and >1 if permutations of the data are required")
+	if (perm_runs>1 & perm_size<1) {
+		oDATA<-DATA
+		DATA<-oDATA[sample(1:nrow(oDATA),round(perm_size*nrow(oDATA))),] }
+	#by default the densities are calculated at 512 points in time n=512 below
+	#this can be changed but needs to be a power of 2 --- 1024 2048 etc etc (must be a Fourier transform at work)
+	d<-density(MCmix(DATA),bw,na.rm=TRUE,n=512)
+	if (plot.new) {add<-TRUE; plot(d,col=col,...)}
+	x1<-min(round(d$x)); x2<-max(round(d$x)); n=d$n
+    out<-matrix(nrow = 512, ncol = N*perm_runs+1); out[,1]<-d$x; out[,2]<-d$y; P<-0
+	pb <- txtProgressBar(min=2,max=N*perm_runs-1,initial=2)
+	for (perm in 1:perm_runs) {
+	  for (run in 2:N-1) {
+	   	  P<-P+1
+		  if (perm_runs>1 & perm_size<1) DATA<-oDATA[sample(1:nrow(oDATA),round(perm_size*nrow(oDATA))),]	
+	      d<-density(MCmix(DATA),bw,na.rm=TRUE,from=x1,to=x2,n=512)
+		  out[,P+2]<-d$y 
+		  if (add & P>2) lines(out[,1],rowMeans(out[,2:P]),col=col)
+		  setTxtProgressBar(pb,P+1)
+	  }
+	}
+	close(pb)
+	class(out)='MCd'; return(out)
+}
+
 
 plot.MCd<-function(x,add=FALSE,col=rgb(0,0,0.8,0.5),scalefactor=1,xlab='Automatic',grid=TRUE,...) { 
   M<-rowMeans(x[,2:ncol(x)],na.rm=TRUE)*scalefactor
@@ -175,6 +275,17 @@ drawmodel<-function(n=100,add=TRUE,...) {
 	mod
 }
 
+pop_sim<-function(rate=1,startpop=10000,from=200,to=1700){
+	pop<-c()
+	pop[1]<-startpop; Y=0
+	for(Y in 2:(to-from+1)) pop[Y]<-pop[Y-1]*(rate/100)+pop[Y-1]
+	return(data.frame(x=c(from:to),y=pop))
+}
+
+#e.g. try the following to add an exponential population model with annual increase of 0.5%
+#the plot will start from a point clicked upon with the mouse
+#l<-locator(); lines(pop_sim(rate=0.5,from=l$x[1],to=1700,start=l$y[1]))
+	
 #function to make a MCdensity-like object from a list of calender dates without 14C uncertainty
 #using bootstrapping (sampling with replacement)
 bootstrap_density<-function(DATA=CLIP(),N=100, col=rgb(0,0,0,0.01),bw=30,...) {
@@ -192,8 +303,8 @@ bootstrap_density<-function(DATA=CLIP(),N=100, col=rgb(0,0,0,0.01),bw=30,...) {
 }
 
 compare_densities<-function(D1,D2,...) {
-    sub1<-D1[which(round(D1[,1],-1) %in% round(D2[,1],-1)),]
-    sub2<-D2[which(round(D2[,1],-1) %in% round(D1[,1],-1)),]
+    sub1<-D1[which(round(D2[,1],-1) %in% round(D1[,1],-1)),]
+    sub2<-D2[which(round(D1[,1],-1) %in% round(D2[,1],-1)),]
     if(nrow(sub1)!=nrow(sub2)) stop("Sorry can't align inputs")
     plot(sub1[,1],sub1[,2]/sub2[,2],col=NA,...)
     for (N in 2:ncol(sub1)-1) lines(sub1[,1],sub1[,N]/sub2[,N],col=rgb(0,0,0,0.05)) 
@@ -201,7 +312,7 @@ compare_densities<-function(D1,D2,...) {
 }
 
 #Extract the various probablity densities for a given year from an object of class MCd
-year_densities<-function(Y,MCd) MCd[which.min(abs(txd[,1]-Y)),][-1]
+year_densities<-function(Y,MCd) MCd[which.min(abs(MCd[,1]-Y)),][-1]
 	
 #Wee functions for polygon plots, plot.C14 is the method of plot()-ing dates
 fill<-function(j,col="grey",border=NA) polygon(c(j[1,1],j[,1],max(j[,1])), c(j[1,2],j[,2],j[1,2]),col=col,border=border)
@@ -253,7 +364,7 @@ time_matrix<-function(datelist,buffer=100,BC=TRUE) {
   colnames(stmap)<-c(colnames(datelist),as.character(date_range))  
   stmap[,1:ncol(datelist)]<-datelist                                               
   
-  #perform the calculations, by default if the fourth column contains M for marine samples the marine curve will be used
+  #perform the calculations, by default if a fourth column exists, it should contain the name of the calcurve to be used
   pb <- txtProgressBar(min=1,max=l,initial=1)
   for (d in 1:l) {
       cd<-rowcal(stmap[d,2],stmap[d,3],BC=BC)
@@ -268,13 +379,17 @@ time_matrix<-function(datelist,buffer=100,BC=TRUE) {
 	return(stmap)
 }
 
-#Optimised time_matrix function
-time_matrix2<-function(datelist,buffer=100,BC=TRUE) {
+#Version of the time_matrix function for samples with different calibration curves
+#Custom calibration curves can be made with the mixcurves() function
+#This is a good way of summing marine dates with custom deltaRs for example
+
+
+time_matrix_mix<-function(datelist,buffer=100,BC=TRUE) {
   
   #set up a big matrix to hold results
   #first we need to "find" the range of the calibrated output
   
-  if (ncol(datelist)<3) stop("time_matrix needs at least three columns in the input (ID, BP, error)")
+  if (ncol(datelist)<3) stop("time_matrix needs at least four columns in the input (ID, BP, error, calcurve)")
   lower_date<-min(rowcalmode(datelist[(datelist[,2]==max(datelist[,2])),2],40,BC=BC))-buffer
   upper_date<-max(rowcalmode(datelist[(datelist[,2]==min(datelist[,2])),2],40,BC=BC))+buffer
   if (upper_date==-Inf) upper_date<-0
@@ -287,12 +402,11 @@ time_matrix2<-function(datelist,buffer=100,BC=TRUE) {
   colnames(stmap)<-c(colnames(datelist),as.character(date_range))  
   stmap[,1:ncol(datelist)]<-datelist                                               
   
-  #perform the calculations, by default if the fourth column contains M for marine samples the marine curve will be used
+  #perform the calculations, by default if a fourth column exists, it should contain the name of the calcurve to be used
   pb <- txtProgressBar(min=1,max=l,initial=1)
   for (d in 1:l) {
-      cd<-rowcal(stmap[d,2],stmap[d,3],BC=BC)
-      if (ncol(datelist)>3) {if (stmap[d,4]=='M') cd<-rowcal(stmap[d,2],stmap[d,3],BC=BC,calcurve=marine)}
-	  tcd<-t(cd[(cd[,1] >=lower_date & cd[,1]<=upper_date),1:2])
+      cd<-eval(parse(text=paste("rowcal(",stmap[d,2],",",stmap[d,3],",calcurve=",as.character(stmap[d,4]),")",sep='')))
+      tcd<-t(cd[(cd[,1] >=lower_date & cd[,1]<=upper_date),1:2])
       colnames(tcd)<-tcd[1,]
       tcd<-tcd[-1,]
       stmap[d,]<-replace(stmap[d,],values=tcd,list=names(tcd))
@@ -301,6 +415,7 @@ time_matrix2<-function(datelist,buffer=100,BC=TRUE) {
     close(pb)
 	return(stmap)
 }
+
 
 
 # code to sum and plot sums of C14 dates
@@ -321,11 +436,11 @@ psum<-function(stt,add=FALSE, lines=TRUE, fill=TRUE,xlab="Cal. BC/AD",ylab="Summ
    if (lines==TRUE) lines(x,s+offset,col=col.lines,lty=lty,lwd=lwd)
    if (fill==TRUE) polygon(c(x[1],x,x[w-5]),c(offset,s+offset,offset),col=col.fill,border=NA)
    if (inv==TRUE) s<-s*-1 
-   if (lines==FALSE && plot==FALSE && fill==FALSE) return(s+offset)
+   if (lines==FALSE && add==FALSE && fill==FALSE) return(s+offset)
 }  
 
 # User-friendly function to quickly sum any list of dates
-rowcalsum<-function(DATA=CLIP(),...) {mat<-time_matrix(cbind(NA,DATA)); psum(mat,...)}
+rowcalsum_old<-function(DATA=CLIP(),...) {mat<-time_matrix(cbind(NA,DATA)); psum(mat,...)}
 
 # User-friendly function to plot both sum and KDE a la CBR's 2017 paper
 # Example use:
@@ -379,3 +494,83 @@ make_animated_map<-function(DATA,coast,stmap=NA,out='output.pdf',pt.cex=1,pt.col
 	close(pb)
 	dev.off()
 }
+
+
+DMlm<-function(DM, from=0, to=0, add=FALSE, ...) {
+	# Select relevant part of KDE model 
+	if(from==0 & to==0) {
+		loc<-locator()
+		from<-loc$x[1]; to<-loc$x[2] }
+	fromi<-which(abs(DM[,1]-from)==min(abs(DM[,1]-from)))
+	toi<-which(abs(DM[,1]-to)==min(abs(DM[,1]-to)))
+	SUB<-DM[fromi:toi,]
+	
+	# Compute linear regression for each KDE simulation
+	
+	rate<-c(); Pr<-c(); r.squared<-c()
+	for(N in 2:ncol(SUB)){
+		mod<-lm(SUB[,N] ~ SUB[,1])
+		slm<-summary(mod)	
+		rate[N]<-slm$coefficients[2,1]
+		 Pr[N]<-slm$coefficients[2,4]
+		r.squared[N]<-slm$r.squared
+		if(add) abline(mod,...)
+		}
+	return(data.frame(rate=rate, Pr=Pr, r.squared=r.squared))
+}
+
+DMgrowth<-function(DM, from=0, to=0, add=FALSE, ...) {
+	# Select relevant part of KDE model 
+	if(from==0 & to==0) {
+		loc<-locator()
+		from<-loc$x[1]; to<-loc$x[2] }
+	fromi<-which(abs(DM[,1]-from)==min(abs(DM[,1]-from)))
+	toi<-which(abs(DM[,1]-to)==min(abs(DM[,1]-to)))
+	SUB<-DM[fromi:toi,]
+	
+	# Compute linear regression for each KDE simulation
+	# And calculate an annual growth rate for each
+	growth<-c(); Pr<-c(); r.squared<-c(); int<-c()
+	for(N in 2:ncol(SUB)){
+		mod<-lm(SUB[,N] ~ SUB[,1])
+		slm<-summary(mod)	
+		 k<-slm$coefficients[2,1]
+   		 C<-slm$coefficients[1,1]
+    	 y2<-to*k+C
+    	 y1<-from*k+C
+    	if(y2<y1) growth[N]<-(-y1/y2)/(to-from) else growth[N]<-(y2/y1)/(to-from)
+    	#growth[N]<-(y2-y1)/(y1*(to-from))
+		#growth[N]<-(((y2-y1)/y1)*100)/(to-from)
+		r.squared[N]<-slm$r.squared
+		Pr[N]<-slm$coefficients[2,4] 
+		if(add) abline(mod,...)
+		}
+	out<-data.frame(from=from,to=to,growth=growth, Pr=Pr, r.squared=r.squared)
+	out<-out[-1,]
+	class(out)='DMfit'; return(out)
+}
+
+summary.DMfit<-function(DMf) {
+   stopifnot(inherits(DMf, "DMfit"))
+   from<-min(DMf$from)
+   to<-max(DMf$to)
+   g<-sort(DMf$growth)
+   # Exclude the 30 strangest regressions
+   l<-length(g); g<-g[15:l-15]
+   cat("\n", 
+        sprintf("\tSpan: %s to %s",round(from,0),round(to,0)),"\n",
+        sprintf("\tGrowth rate (R-squared): %s±%s (%s)",round(median(g)*100,2),round(mad(g)*100,2),round(mean(DMf$r.squared),2)),"\n",
+        sprintf("\tPr|t| : %s±%s",signif(mean(DMf$Pr),2),signif(sd(DMf$Pr),2)),"\n")
+}
+
+
+ 
+
+
+
+
+
+
+
+
+
