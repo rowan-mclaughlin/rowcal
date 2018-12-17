@@ -228,7 +228,6 @@ mixdensity<-function(DATA=CLIP(),N=100,perm_runs=1, perm_size=1, col=rgb(0,0,0,0
 	class(out)='MCd'; return(out)
 }
 
-
 plot.MCd<-function(x,add=FALSE,col=rgb(0,0,0.8,0.5),scalefactor=1,xlab='Automatic',grid=TRUE,...) { 
   M<-rowMeans(x[,2:ncol(x)],na.rm=TRUE)*scalefactor
   Sd<-apply(x[,2:ncol(x)],1,sd,na.rm=TRUE)*scalefactor
@@ -318,19 +317,55 @@ year_densities<-function(Y,MCd) MCd[which.min(abs(MCd[,1]-Y)),][-1]
 fill<-function(j,col="grey",border=NA) polygon(c(j[1,1],j[,1],max(j[,1])), c(j[1,2],j[,2],j[1,2]),col=col,border=border)
 plot.C14<-function(x,col="grey",...) {plot(x,col=NA,...) ; fill(x,col=col)}
 
-# Obtain confidence intervals using Highest Density Regions (requires hrdcde package)
-try(library(hdrcde))
 
-spansc14<-function(rdate) {
-	d<-list(x=rdate[,1],y=rdate[,2])
-	spans<-hdr(den=d,prob=c(68,95))$hdr
-	spans
+# Functions for summarising radiocarbon dates
+
+# Firstly, a function to return the highest density interval for a date 
+# Heavily, er, 'influenced' by the code for same in A Parnell's Bchron !
+ 
+hdr<-function(date, prob = 0.95) {
+   date_a<-approx(date[,1],date[,2],c(min(date[,1]):max(date[,1])))
+   ag = date_a$x
+   de = date_a$y
+    # Put the probabilities in order
+    o = order(de)
+    cu = cumsum(de[o])
+    # Find which ones are above the threshold
+    good_cu = which(cu>1-prob)
+    good_ag = sort(ag[o][good_cu])
+    # Pick out the extremes of each range
+    breaks = diff(good_ag)>1
+    where_breaks = which(diff(good_ag)>1)
+    n_breaks = sum(breaks) + 1
+    # Store output
+    out = vector('list', length = n_breaks)
+    low_seq = 1
+    high_seq = ifelse(length(where_breaks)==0, length(breaks), where_breaks[1])
+    for(i in 1:n_breaks) {
+      out[[i]] = c(good_ag[low_seq], good_ag[high_seq])
+      curr_dens = round(100*sum(de[o][seq(good_cu[low_seq], good_cu[high_seq])]),1)
+      names(out)[[i]] = paste0(as.character(curr_dens),'%')
+      low_seq = high_seq + 1
+      high_seq = ifelse(i<n_breaks-1, where_breaks[i+1], length(breaks))
+    }
+    return(out)
 }
 
+# Function to return span of date; default is 95% CI
+
+spansc14<-function(rdate,prob=0.95) {
+	spans<-unlist(hdr(rdate,prob=prob))
+	return(c(min(spans),max(spans)))
+}
+
+# Useful summary of C14 date
+
 summary.C14<-function(rdate) {
-	d<-list(x=rdate[,1],y=rdate[,2])
-	spans<-hdr(den=d,prob=c(68.27,95.45))
-	spans
+	wm<-sum(rdate[,1]*rdate[,2]/max(rdate[,2]))/sum(rdate[,2]/max(rdate[,2]))
+    spans<-unlist(hdr(rdate))
+	out<-c(round(wm), round(min(spans)), round(max(spans)))
+	names(out)<-c('wmean','l95','u95')
+	return(out)
 }
 
 # Wee functions to print the upper and lower bounds of a calibrated age
@@ -470,24 +505,26 @@ rowcaldensum<-function(DATA=CLIP(),N=100,perm_runs=1, perm_size=1, bw=30,col.fil
 # data<-BIRE[BIRE$Where=='Ireland' & BIRE$mcode=='Sc' & BIRE$ccode=='I',c(1,2,3,6,7)]
 # make_animated_map(data,ire,out='Cereals_from_Industry.pdf')
 
-make_animated_map<-function(DATA,coast,stmap=NA,out='output.pdf',pt.cex=1,pt.col=rgb(1,0,0,0.4),threshold=0.002,width=6,height=6,...) {
+make_animated_map<-function(DATA,coast,stmap=NA,out='output.pdf',pt.cex=1,pt.col=rgb(1,0,0,0.4),threshold=0.002,dropempty=FALSE,BP=FALSE,width=6,height=6,...) {
   pdf(out,width=width,height=height)
   print('Calibrating dates...')
   if(is.na(stmap)) stmap<-time_matrix(DATA)
   print('Drawing map')
   pb <- txtProgressBar(min=6,max=ncol(stmap),initial=6)
   for(COL in 6:ncol(stmap)){
-    plot(coast,...)
-    year<-as.numeric(colnames(stmap)[COL])
-    year_str<-paste(-year,"cal. BC")
-    if(year > 0 ) year_str<-paste(year,"cal. AD")
-    submap<-na.omit(stmap[stmap[,COL]>threshold,c(4:5,COL)])
-    if(nrow(submap)>0) { for (n in 1:nrow(submap)) {
-         # now plot the point, size scaled from the prob
-         psize<-pt.cex*25*submap[n,3]^0.5     # scaling factor
-         if (psize > 3.5) psize<-3.5   # sets a maximum size 
-         points(submap[n,1],submap[n,2],pch=15,col=pt.col,cex=psize)
-    }}
+    if(dropempty==FALSE | sum(stmap[,COL]>0)) {
+       plot(coast,...)
+       year<-as.numeric(colnames(stmap)[COL])
+       year_str<-paste(-year,"cal. BC")
+       if(year > 0 ) year_str<-paste(year,"cal. AD")
+       if(BP==TRUE) year_str<-paste(1950-year,"cal. BP")
+       submap<-na.omit(stmap[stmap[,COL]>threshold,c(4:5,COL)])
+       if(nrow(submap)>0) { for (n in 1:nrow(submap)) {
+            # now plot the point, size scaled from the prob
+            psize<-pt.cex*25*submap[n,3]^0.5     # scaling factor
+            if (psize > 3.5) psize<-3.5   # sets a maximum size 
+            points(submap[n,1],submap[n,2],pch=15,col=pt.col,cex=psize)
+    }}}
     title(main=year_str)
     setTxtProgressBar(pb,COL)
 	}
@@ -563,14 +600,11 @@ summary.DMfit<-function(DMf) {
         sprintf("\tPr|t| : %s±%s",signif(mean(DMf$Pr),2),signif(sd(DMf$Pr),2)),"\n")
 }
 
-
- 
-
-
-
-
-
-
-
-
+totalden<-function(DM, from, to, density=FALSE) {
+   tot<-sum(DM[,-1])/(ncol(DM)-1)
+   sub<-DM[which(DM[,1]>=from & DM[,1]<to),-1]
+   r<-(sum(sub)/ncol(sub))/tot
+   if(density) r<-r/(to-from)	
+   return(r)
+}
 
