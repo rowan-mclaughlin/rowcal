@@ -1,0 +1,16 @@
+Package: rowcal
+Title: Analysis of chronological information for archaeology, history and palaeoecology
+Version: 1.0.0.9000
+Authors: person("Rowan", "McLaughlin", , "rowan.mclaughlin@mu.ie", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-4923-1339"))
+Description: rowcal is a package for investigating trends in chronological data. It is designed to be used with radiocarbon dates, but can be used with any chronological data. It includes functions for calibrating dates, summarising and plotting data, and investigating trends in the data. It is designed to be used in archaeology, history, and palaeoecology, but can be used in any field where chronological data is important.
+License: ``use_gpl3_license()`
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: 
+    R (>= 2.10)
+LazyData: true
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
