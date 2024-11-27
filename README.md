@@ -1,6 +1,6 @@
 # rowcal
 
-rowcal is a R package for the analysis of chronological information in archaeology, history and related subjects, including tools for radiocarbon calibration and data analysis. 
+rowcal is an R package for the analysis of chronological information in archaeology, history and related subjects, including tools for radiocarbon calibration and data analysis. 
 
 ## Getting Started
 
