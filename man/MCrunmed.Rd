@@ -2,46 +2,75 @@
 % Please edit documentation in R/MCrumned.R
 \name{MCrunmed}
 \alias{MCrunmed}
-\title{Monte Carlo Simulation of Running Median}
+\title{Simulate and Compute Running Median for Chronological Data}
 \usage{
-MCrunmed(x0, x1, y, k = 51, N = 100, blur = 0)
+MCrunmed(
+  cal = NULL,
+  unif = NULL,
+  x = list(),
+  y = NULL,
+  calcurve = "intcal",
+  N = 100,
+  y_blur = 0,
+  k = 51
+)
 }
 \arguments{
-\item{x0}{Numeric vector. The lower bounds of the uniform distribution for chronological data.}
+\item{cal}{A matrix of radiocarbon data with 3 or 4 columns:
+\itemize{
+\item Column 1: Radiocarbon years (14C age).
+\item Column 2: Standard deviation of radiocarbon years.
+\item Column 3 (optional): Calibration curve names. Defaults to \code{calcurve}.
+\item Column 4: Response variable.
+}
+Default is \code{NULL}.}
 
-\item{x1}{Numeric vector. The upper bounds of the uniform distribution for chronological data.}
+\item{unif}{A matrix of uniform chronological data with 3 columns:
+\itemize{
+\item Column 1: Start of uniform interval (x0).
+\item Column 2: End of uniform interval (x1).
+\item Column 3: Response variable (y).
+}
+Default is \code{NULL}.}
 
-\item{y}{Numeric vector. The response variable for which the running median will be calculated.}
+\item{x}{A list of calibrated or uniform chronological data for simulation. Default is an empty list.}
 
-\item{k}{Integer. Width of the running median window. Default is 51.}
+\item{y}{A vector of response variable values associated with \code{x}. Default is \code{NULL}.}
 
-\item{N}{Integer. Number of Monte Carlo simulations. Default is 100.}
+\item{calcurve}{A character string specifying the calibration curve to use when processing
+radiocarbon data. Default is "intcal".}
 
-\item{blur}{Numeric. Standard deviation of additional Gaussian noise (as a fraction of the range in \code{x0} and \code{x1}). Default is 0.}
+\item{N}{The number of Monte Carlo simulations to perform. Default is 100.}
+
+\item{y_blur}{The standard deviation of Gaussian noise added to \code{y} values. Default is 0 (no noise).}
+
+\item{k}{The width of the running median window (number of points). Default is 51.}
 }
 \value{
-A list of matrices, where each matrix contains two columns:
+A list of class \code{MCr}, where each element is a two-column matrix containing:
 \itemize{
-\item The first column: Simulated chronological data.
-\item The second column: Running median of the response variable.
+\item Simulated chronological values (column 1).
+\item Corresponding running medians of the response variable (column 2).
 }
 }
 \description{
-This function performs Monte Carlo simulations by drawing random values from a
-uniform distribution (for chronological data) and computes the running median
-of a response variable. The results are stored in a list of matrices.
+The \code{MCrunmed} function combines input chronological data and associated response
+variables, performs Monte Carlo simulations to generate random samples, and computes
+a running median for the response variable across the simulated data.
 }
 \details{
-This function generates simulated chronological data (\code{X}) by drawing random values
-from a uniform distribution defined by \code{x0} and \code{x1}. Optionally, Gaussian noise
-(controlled by \code{blur}) can be added to the simulated data. The response variable (\code{y})
-is then reordered according to the simulated chronological data, and the running median
-is computed using a sliding window of size \code{k}. The results are returned as a list of
-\code{N} simulations.
+The function:
+\enumerate{
+\item Validates and processes input data (\code{cal} and \code{unif}) to generate chronological samples.
+\item Simulates chronological data using Monte Carlo methods.
+\item Computes the temporal order of simulated data.
+\item Applies a running median to the response variable, optionally adding noise to \code{y}.
 }
-\note{
-Ensure that \code{x0}, \code{x1}, and \code{y} are of the same length. The function assumes the
-input chronological bounds (\code{x0}, \code{x1}) and response variable (\code{y}) are appropriately paired.
+
+The three options for input, \code{x} and \code{y}, \code{cal}, and \code{unif} combined if provided. The resulting data is then simulated
+and processed together.
+
+The returned list can be interpolated to a regular time grid with \code{\link{MCr.as.MCd}}
 }
 \examples{
 # Example data
@@ -57,5 +86,8 @@ head(result[[1]])
 
 }
 \seealso{
-\code{\link{MCr.as.MCd}}
+\code{\link{runmed}} \code{\link{MCr.as.MCd}} \code{\link{rowunif}} \code{\link{rowcal}}
+}
+\author{
+T. Rowan McLaughlin
 }

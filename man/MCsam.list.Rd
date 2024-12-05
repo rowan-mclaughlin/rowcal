@@ -17,10 +17,12 @@ This function converts a list of calibrated radiocarbon dates into a vector of o
 }
 \details{
 This function processes each element of the input list and generates one sample per calibrated radiocarbon date.
-Note that there is no check that the elements are all using the same calendar.)
+Note that there is no check that the elements are all using the same calendar.
 }
 \examples{
-L <- list(rowcal(5310, 35), rowcal(5200, 41), calen(-3900,30))
+L <- rowcal(c(5310, 5200, 3900),c(34,43,0.5),c('intcal','intcal','cal'))
 MCsam.list(L)
-
+}
+\author{
+T. Rowan McLaughlin
 }

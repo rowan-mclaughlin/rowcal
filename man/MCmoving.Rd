@@ -49,7 +49,7 @@ colnames(dates) <- c("BP", "error", "calcurve", "response")
 moving_avg <- MCmoving(dates, N = 50, k = 11, yjitter = 0.1)
 
 # Plot the results
-plot(moving_avg, type = "l", col = "blue", lwd = 2, 
+plot(moving_avg, type = "l", col = "blue", lwd = 2,
      xlab = "Cal. BC/AD", ylab = "Response Variable")
 
 }

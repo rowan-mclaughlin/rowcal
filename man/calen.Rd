@@ -23,7 +23,7 @@ This function generates a normal distribution whose mean is the supplied calenda
 }
 \details{
 If the sigma value is zero, a small uncertainty (0.5) is added to avoid errors.
-The function generates a normal distribution of calendar dates centered around the input radiocarbon determination.
+The function generates a normal distribution  of probability masses around the input date.
 The number of sigmas determines the range of calendar dates.
 The resolution of the generated dates is adjusted based on the sigma value.
 }

@@ -66,3 +66,6 @@ McLaughlin, T.R. 2019. On applications of space-time modelling with open-source 
 \seealso{
 \code{\link{density}} \link{'mixdensity'} \link{'phasedensity'} \code{\link{bw.nrd}} \code{\link{plot.MCd}}
 }
+\author{
+T. Rowan McLaughlin
+}

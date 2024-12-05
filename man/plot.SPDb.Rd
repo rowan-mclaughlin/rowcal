@@ -9,7 +9,7 @@
   probs = c(0.16, 0.84),
   col = rgb(0.1, 0.7, 0.1, 0.8),
   add = FALSE,
-  fill = TRUE,
+  fill = NA,
   xlab = "Automatic",
   ylab = "Summed prob.",
   ...
@@ -42,11 +42,12 @@ The function can create a new plot or add to an existing plot, with customizable
 }
 \examples{
 # Plot bootstrapped confidence intervals for a SPD
-dates <- data.frame(BP = c(4840, 4885, 4739, 4840, 4885, 4239, 4840, 4845, 4739, 4826, 4610), sd = c(45, 50,60,30, 27, 30, 33, 45, 23, 24, 31))
+dates <- data.frame(BP = c(4840, 4885, 4739, 4840, 4885, 4239, 4840, 4845, 4739, 4826, 4610),
+    sd = c(45, 50,60,30, 27, 30, 33, 45, 23, 24, 31))
 S<-rowcalsum(dates)
 Sboot<-SPDboot(S)
-plot(Sboot, col = "#8888FF20")
-lines(median(Sboot), col="#5050FF")δ
+plot(Sboot, col=NA, fill = "#8888FF20")
+lines(median(Sboot), col="#5050FF")
 
-[`SPDboot`] ['median.SPDboot']
+[`SPDboot`] ['median.SPDb'] ['summary.SPDb']
 }

@@ -26,12 +26,19 @@ This function performs Gaussian Kernel Density Estimation using a Monte Carlo me
 It converts each element of the input list to a data frame suitable for density estimation, calculates the density estimate for each Monte Carlo iteration, and returns a matrix in the same format as \code{MCdensity} containing the density estimates for further analysis.
 }
 \examples{
-# Calculate Gaussian KDE for a list of two-column probability distributions
- L <- list(rowcal(5310, 35), rowcal(5200, 41), calen(-3900,30),rowcal(5753, 35), rowcal(5500, 41))
-denmod <- MCdensity(L)
+# Calculate Gaussian KDE for a mixture of calibrated and calendar dates
+L1 <- rowcal(c(5310,5200,-3900, 5100), c(34,43,0.5, 30), c('intcal','intcal','calcal','intcal'))
+L2 <- rowunif(c(-4000, -4100, -4050), c(-3800, -3900, -3850))
+denmod <- MCdensity.list(c(L1,L2))
 plot(denmod)
 
 }
+\references{
+McLaughlin, T.R. 2019. On applications of space-time modelling with open-source 14C age calibration. Journal of Archaeological Method and Theory 26, 479–501. https://doi.org/10.1007/s10816-018-9381-3
+}
 \seealso{
 \code{\link{MCdensity}} \code{\link{plot.MCd}} \code{\link{density}} \code{\link{bw.nrd}}
+}
+\author{
+T. Rowan McLaughlin
 }

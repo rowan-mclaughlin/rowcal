@@ -4,7 +4,7 @@
 \alias{rowcalsam}
 \title{Calendar age samples for a radiocarbon determination}
 \usage{
-rowcalsam(date, sigma, calcurve = intcal, N = 1, ...)
+rowcalsam(date, sigma, calcurve = "intcal", N = 1, ...)
 }
 \arguments{
 \item{date}{A radiocarbon determination.}

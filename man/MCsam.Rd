@@ -25,3 +25,6 @@ L <- data.frame(BP = c(5310, 5200, 5030), SD = c(35, 41, 23))
 MCsam(L)
 
 }
+\author{
+T. Rowan McLaughlin
+}

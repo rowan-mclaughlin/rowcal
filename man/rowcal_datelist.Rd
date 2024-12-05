@@ -4,12 +4,16 @@
 \alias{rowcal_datelist}
 \title{Calibrate a List of Radiocarbon Dates}
 \usage{
-rowcal_datelist(dl = CLIP(), r = 1)
+rowcal_datelist(dl = CLIP(), prob = 0.95, copy = TRUE, ...)
 }
 \arguments{
 \item{dl}{A data frame containing radiocarbon determination dates. If the data frame has two columns, it is assumed that the first column represents the radiocarbon dates, and the second column represents their corresponding uncertainties. If it has three columns, the third column represents the calibration curve (default is 'intcal'). If nothing is provided the function will attempt to read from the clipboard.}
 
-\item{r}{The rounding parameter for the two-sigma range (default is 1).}
+\item{prob}{The probability range for the calibrated dates. Default is 0.95.}
+
+\item{copy}{Logical. If TRUE, the output is copied to the clipboard (Windows and macOS). Default is TRUE.}
+
+\item{...}{Additional arguments to be passed to the 'rowcal' function.}
 }
 \value{
 A data frame with an additional column indicating the two-sigma range of calibrated dates.
@@ -22,9 +26,10 @@ This function calibrates the radiocarbon determination dates using the 'rowcal' 
 }
 \examples{
 # Calibrate a list of radiocarbon dates with default parameters
-rowcal_datelist(dl)
+dl<-BIRE[BIRE$Where=='Britain' & BIRE$ccode=='F',2:3] # British burnt mounds
+rowcal_datelist(dl, copy=FALSE)
 
 # Calibrate a list of radiocarbon dates with custom parameters
-rowcal_datelist(dl, r = 0.5)
+rowcal_datelist(dl, prob=0.68, copy=FALSE)
 
 }

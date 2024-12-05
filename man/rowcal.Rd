@@ -2,29 +2,66 @@
 % Please edit documentation in R/rowcal.R
 \name{rowcal}
 \alias{rowcal}
-\title{Calibrate radiocarbon date with output in rows of two columns}
+\title{Calibrate Radiocarbon Dates with output in rows of two columns}
 \usage{
-rowcal(date, sigma, calcurve = intcal, BC = TRUE, norm = TRUE)
+rowcal(
+  date,
+  sigma,
+  cc = rep("intcal", length(date)),
+  res = 5,
+  BC = TRUE,
+  norm = TRUE
+)
 }
 \arguments{
-\item{date}{A radiocarbon determination in conventional radiocarbon years BP.}
+\item{date}{A numeric vector of radiocarbon ages (BP).}
 
-\item{sigma}{The associated laboratory error.}
+\item{sigma}{A numeric vector of measurement errors (standard deviations) corresponding to each date.}
 
-\item{calcurve}{The calibration curve object to use for calibration. Defaults to \code{intcal}.}
+\item{cc}{A character vector specifying the calibration curves to use for each date.
+Defaults to \code{rep('intcal', length(date))}.}
 
-\item{BC}{Output in calendar years BCE/CE (also known as BC/AD)? Defaults to TRUE.}
+\item{res}{Integer. The resolution of the calibration curve. Defaults to 5.}
 
-\item{norm}{Should be probability masses be normalised? Defaults to TRUE.}
+\item{BC}{Logical. If \code{TRUE}, the output dates are converted from calibrated BP to calibrated BC/AD.
+Defaults to \code{TRUE}.}
+
+\item{norm}{Logical. If \code{TRUE}, the calibrated probability densities are normalized to sum to 1.
+Defaults to \code{TRUE}.}
+}
+\value{
+A list of matrices, where each matrix contains two columns:
+\itemize{
+\item \code{Cal. BC/AD} (or \code{Cal. BP}, depending on \code{BC}): Calibrated time.
+\item \code{Relative p}: The calibrated probability density.
+}
+If only one date is provided, a single matrix is returned instead of a list.
 }
 \description{
-This function calculates the probability masses of a radiocarbon determination given its associated error term and the calibration curve to compare against.
+This function calibrates radiocarbon dates using specified calibration curves.
+It applies a normal distribution's density function to account for uncertainties
+in radiocarbon age and measurement errors. It can also be used to describe
+calendar age estimates with a probablity distribution (see details).
+}
+\details{
+The function checks for the existence of the specified calibration curves (\code{cc})
+in the R environment and extracts the relevant sections based on the provided
+radiocarbon dates and errors. The calibration curve is linearly interpolated to
+ensure time steps of 1 year. The normal distribution is applied to model the uncertainty.
+
+Calendar (not radiocarbon) ages identified by mean ± standard deviation can be specified
+using e.g. the dummy calibration curve \code{calcal}. Sigma should not be less than 0.2 unless a very high
+resolution dummy curve is constructed and used.
 }
 \examples{
 rowcal(5000,30) # Calibrate 5000±30 BP
+rowcal(c(5000, -3700), c(30, 1)) # Calibrate a date and generate a probablity distribution for a date of 3700±1 BC
 }
 \references{
 McLaughlin, T.R. 2019. On applications of space-time modelling with open-source 14C age calibration. Journal of Archaeological Method and Theory 26, 479–501. https://doi.org/10.1007/s10816-018-9381-3
+}
+\author{
+T. Rowan McLaughlin
 }
 \keyword{calibration}
 \keyword{radiocarbon}
