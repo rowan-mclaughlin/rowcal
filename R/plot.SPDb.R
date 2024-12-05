@@ -18,16 +18,17 @@
 #'
 #' @examples
 #' # Plot bootstrapped confidence intervals for a SPD
-#' dates <- data.frame(BP = c(4840, 4885, 4739, 4840, 4885, 4239, 4840, 4845, 4739, 4826, 4610), sd = c(45, 50,60,30, 27, 30, 33, 45, 23, 24, 31))
+#' dates <- data.frame(BP = c(4840, 4885, 4739, 4840, 4885, 4239, 4840, 4845, 4739, 4826, 4610),
+#'     sd = c(45, 50,60,30, 27, 30, 33, 45, 23, 24, 31))
 #' S<-rowcalsum(dates)
 #' Sboot<-SPDboot(S)
-#' plot(Sboot, col = "#8888FF20")
-#' lines(median(Sboot), col="#5050FF")δ
+#' plot(Sboot, col=NA, fill = "#8888FF20")
+#' lines(median(Sboot), col="#5050FF")
 #'
 #  @seealso
-#' [`SPDboot`] ['median.SPDboot']
+#' [`SPDboot`] ['median.SPDb'] ['summary.SPDb']
 #' @export
-plot.SPDb <- function(SPDb, probs = c(0.16, 0.84), col = rgb(0.1, 0.7, 0.1, 0.8), add = FALSE, fill = TRUE, xlab = 'Automatic', ylab = 'Summed prob.', ...) {
+plot.SPDb <- function(SPDb, probs = c(0.16, 0.84), col = rgb(0.1, 0.7, 0.1, 0.8), add = FALSE, fill = NA, xlab = 'Automatic', ylab = 'Summed prob.', ...) {
   sy <- summary(SPDb, probs = probs)
   x <- as.numeric(rownames(SPDb))
   U <- sy[, 2]
@@ -46,5 +47,6 @@ plot.SPDb <- function(SPDb, probs = c(0.16, 0.84), col = rgb(0.1, 0.7, 0.1, 0.8)
   }
   lines(x, U, lwd = 1, col = col)
   lines(x, L, lwd = 1, col = col)
-  if (fill == TRUE) polygon(c(x, rev(x)), c(U, rev(L)), col = col, border = NA)
+  polygon.default(c(x, rev(x)), c(U, rev(L)), col = fill, border = NA)
 }
+

@@ -21,7 +21,7 @@
 #' rowcalsam(1337, 30, N = 5)
 #'
 #' @export
-rowcalsam <- function(date, sigma, calcurve = intcal, N = 1, ...) {
+rowcalsam <- function(date, sigma, calcurve = 'intcal', N = 1, ...) {
   g <- rowcal(date, sigma, calcurve, ...)
   random.points <- approx(cumsum(g[,2]) / sum(g[,2]), g[,1], runif(N))$y
   random.points

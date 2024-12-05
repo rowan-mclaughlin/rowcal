@@ -8,18 +8,20 @@
 #'
 #' @details
 #' This function processes each element of the input list and generates one sample per calibrated radiocarbon date.
-#' Note that there is no check that the elements are all using the same calendar.)
+#' Note that there is no check that the elements are all using the same calendar.
 #'
 #' @examples
-#' L <- list(rowcal(5310, 35), rowcal(5200, 41), calen(-3900,30))
+#' L <- rowcal(c(5310, 5200, 3900),c(34,43,0.5),c('intcal','intcal','cal'))
 #' MCsam.list(L)
-#'
+#' @author T. Rowan McLaughlin
 #' @export
 MCsam.list <- function(L) {
-  out <- c()
-  for (N in 1:length(L)) {
+  # Precompute random sampling point for the cumulative probs for each element in the list
+  random_samples <- runif(length(L))
+  # Compute the cumulative probs for each matrix in the list and sample
+  sampled_values <- sapply(seq_along(L), function(N) {
     g <- L[[N]]
-    out[N] <- approx(cumsum(g[, 2]) / sum(g[, 2]), g[, 1], runif(1))$y
-  }
-  out
+    approx(cumsum(g[, 2]) / sum(g[, 2]), g[, 1], random_samples[N], rule=2)$y
+  })
+  sampled_values
 }

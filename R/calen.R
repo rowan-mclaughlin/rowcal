@@ -1,8 +1,8 @@
-#' Generate a Normal Distribution of Calendar Dates 
+#' Generate a Normal Distribution of Calendar Dates
 #'
 #' This function generates a normal distribution whose mean is the supplied calendar date, with output in a two-column matrix, i.e. the same format used by `rowcal`.
 #'
-#' @param date The calendar date forming the mean of the desired 
+#' @param date The calendar date forming the mean of the desired
 #' @param sigma The desired standard deviation
 #' @param sigmas Number of standard deviations to include in the normal distribution. Default is 2.
 #' @param res Resolution of the generated calendar dates. Default is 0.1 for sigma less than 5, otherwise 1.
@@ -11,7 +11,7 @@
 #'
 #' @details
 #' If the sigma value is zero, a small uncertainty (0.5) is added to avoid errors.
-#' The function generates a normal distribution of calendar dates centered around the input radiocarbon determination.
+#' The function generates a normal distribution  of probability masses around the input date.
 #' The number of sigmas determines the range of calendar dates.
 #' The resolution of the generated dates is adjusted based on the sigma value.
 #'

@@ -1,7 +1,7 @@
 #' Moving Average Time Series for Radiocarbon Dates with a Response Variable
 #'
-#' This function computes a moving average time series for radiocarbon (14C) dates 
-#' associated with a response variable. It uses Monte Carlo resampling to capture the 
+#' This function computes a moving average time series for radiocarbon (14C) dates
+#' associated with a response variable. It uses Monte Carlo resampling to capture the
 #' chronological uncertainty and the response variable's behavior over time is expressed with a moving average.
 #'
 #' @param dl A data frame or matrix containing three or four columns:
@@ -15,33 +15,33 @@
 #' @param yjitter Amount of random jitter to add to the response variable during resampling. Default is 0.
 #' @param ... Additional arguments to pass to the plot function.
 #'
-#' @return An object of class `MCd`, containing the time series of the moving average. 
-#'   The first column represents calibrated calendar years, and subsequent columns 
+#' @return An object of class `MCd`, containing the time series of the moving average.
+#'   The first column represents calibrated calendar years, and subsequent columns
 #'   contain the simulated moving average values from the Monte Carlo resampling.
 #'
 #' @details
-#' This function uses a Monte Carlo approach to simulate calibrated radiocarbon dates 
-#' and compute a moving average of the response variable. The `k` parameter controls the 
-#' width of the running median window applied to the (optionally jittered) response variable. 
+#' This function uses a Monte Carlo approach to simulate calibrated radiocarbon dates
+#' and compute a moving average of the response variable. The `k` parameter controls the
+#' width of the running median window applied to the (optionally jittered) response variable.
 #'
 #' @examples
 #' # Example data
 #' dates <- matrix(c(5000, 30, "intcal", rnorm(50)), ncol = 4)
 #' colnames(dates) <- c("BP", "error", "calcurve", "response")
-#' 
+#'
 #' # Compute moving average
 #' moving_avg <- MCmoving(dates, N = 50, k = 11, yjitter = 0.1)
-#' 
+#'
 #' # Plot the results
-#' plot(moving_avg, type = "l", col = "blue", lwd = 2, 
+#' plot(moving_avg, type = "l", col = "blue", lwd = 2,
 #'      xlab = "Cal. BC/AD", ylab = "Response Variable")
 #'
-#' @seealso 
+#' @seealso
 #' [`plot.MCd`]
 #' @export
 MCmoving<-function(dl,N=100,calcurve='intcal',k=13,yjitter=0,...) {
   X<-c(); Y<-c()
-  if(ncol(dl)<3 | ncol(dl)>4) stop("input should be a matrix of three or four 
+  if(ncol(dl)<3 | ncol(dl)>4) stop("input should be a matrix of three or four
                               columns (BP, error, [calcurve],response variable)")
   if(ncol(dl)==3) dl<-cbind(dl[,1:2],calcurve,dl[,3])
   pb <- txtProgressBar(min=1,max=N,initial=1)
