@@ -8,7 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-rowcal operates in the R environment, there are no additional dependencies. 
+rowcal operates in the R environment, there are no additional dependencies othen the `graphics` `stats` and `utils` included with base R. 
 
 
 ### Installing
@@ -34,13 +34,53 @@ plot(cal)
 hdr(cal) # 95% highest density region
 ```
 
-### Calculating a KDE for a set of radiocarbon dates
+### Calibrating multiple dates
+`rowcal` can calibrate multiple dates simulaneously, e.g. 
+```
+# simulate 100 radiocarbon dates and plot them with a rainbow color scheme
+uncal<-sort(runif(100,3000,5000), decreasing=TRUE)
+dates<-rowcal(uncal, runif(100,10,50))
+plot(dates, col=rainbow(100, alpha=0.5),lcol='#33333388',xaxt='n')
+ax()
+```
+
+
+### Calculating a KDE for a set of dates
 
 There are many ways of inputing data, the simplest is to copy to the clipboard a two-column list of radiocarbon dates in a spreadsheet. Then:
 
 ```
 kde<-MCdensity()
 plot(kde)
+```
+
+The package includes some test data from Ireland; to calculate a density model for burnt mounds:
+
+```
+data(BIRE)
+bm_dates<-rowcal(BIRE[BIRE$Where == 'Ireland' & BIRE$ccode='F',2:3])
+plot(bm_dates)
+plot.rowyears(bm_dates[order(findmedian(bm_dates))], xlim=c(-3000,-1000))
+
+# Calculate and plot density model (fast algorithm):
+plot(MCdensity(bm_dates),xlim=c(-3000,-1000))
+
+# Calculate and plot density model (bootstrapping algorithm):
+plot(MCdensity(bm_dates, boot=TRUE),xlim=c(-3000,-1000))
+```
+
+### Working with calendar data
+`rowcal` has been designed with the aim of using all kinds of chronological data, not just radiocarbon dates. Dates with a normall-distibuted error can be modelled using the dummy calibraation curve 'calcal' and uniformally-distributed date estimates can be specified using the `rowunif` function. For example, the following analysis is of two atmospheric 14C samples, one marine, one dendro date from 3900 BC, and three uniformly distributed phases (4000-3800, 4100-3900 and 4050-3850 BC): 
+
+```
+L1 <- rowcal(c(5310,5200,-3900, 5900), c(34,43,0.5, 30),
+            c('intcal','intcal','calcal','marine'))
+L2 <- rowunif(c(-4000, -4100, -4050), c(-3800, -3900, -3850))
+
+par(mfrow=c(2,1))
+plot.rowyears(c(L1, L2))
+plot(MCdensity(c(L1, L2)))
+
 ```
 
 ## Contributing
