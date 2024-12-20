@@ -35,12 +35,11 @@ hdr(cal) # 95% highest density region
 ```
 
 ### Calibrating multiple dates
-`rowcal` can calibrate multiple dates simulaneously, e.g. 
+`rowcal` can calibrate multiple dates simulaneously, e.g. 100,000 radiocarbon dates visualied as a rainbow
 ```
-# simulate 100 radiocarbon dates and plot them with a rainbow color scheme
-uncal<-sort(runif(100,3000,5000), decreasing=TRUE)
-dates<-rowcal(uncal, runif(100,10,50))
-plot(dates, col=rainbow(100, alpha=0.5),lcol='#33333388',xaxt='n')
+uncal<-sort(runif(100000,1000,5000), decreasing=TRUE)
+dates<-rowcal(uncal, runif(100000,10,50))
+plot(dates, col=rainbow(100000, alpha=0.5),lcol='#33333388',xaxt='n')
 ax()
 ```
 
@@ -70,7 +69,7 @@ plot(MCdensity(bm_dates, boot=TRUE),xlim=c(-3000,-1000))
 ```
 
 ### Working with calendar data
-`rowcal` has been designed with the aim of using all kinds of chronological data, not just radiocarbon dates. Dates with a normall-distibuted error can be modelled using the dummy calibraation curve 'calcal' and uniformally-distributed date estimates can be specified using the `rowunif` function. For example, the following analysis is of two atmospheric 14C samples, one marine, one dendro date from 3900 BC, and three uniformly distributed phases (4000-3800, 4100-3900 and 4050-3850 BC): 
+`rowcal` has been designed with the aim of using all kinds of chronological data, not just radiocarbon dates. Dates with a normally-distributed error can be modelled using the dummy calibration curve `calcal` and uniformly-distributed date estimates can be specified using the rowunif function. For example, the following analysis is of two atmospheric 14C samples, one marine, one dendrochronological date from 3900 BC, and three uniformly distributed phases (4000-3800, 4100-3900 and 4050-3850 BC):
 
 ```
 L1 <- rowcal(c(5310,5200,-3900, 5900), c(34,43,0.5, 30),
