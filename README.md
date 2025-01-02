@@ -16,7 +16,7 @@ rowcal operates in the R environment, there are no additional dependencies othen
 To install rowcal using the `devtools` package, use: 
 
 ```
-devtools::install.github('rowan-mclaughlin/rowcal')
+devtools::install_github('rowan-mclaughlin/rowcal')
 ```
 ## Calibrating a date
 
