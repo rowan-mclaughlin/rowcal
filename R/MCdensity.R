@@ -1,6 +1,6 @@
 #' Calculate Gaussian Kernel Density Estimation (KDE) for a list of age-calibrated probability distributions
 #'
-#' This function calculates the Gaussian Kernel Density Estimation (KDE) for a list of two-column probability distributions, where each element represents a probability distribution (time, probability).
+#' This function calculates the Gaussian Kernel Density Estimation (KDE) for a list of radiocarbon dates, etc., where each element represents a probability distribution (time, probability). It can also call `rowcal` to calculate this list from input data in a single step.
 #'
 #' @param L List of data frames where each element represents a two-column probability distribution. The first column is time, and the second column is probability. If NULL, the function will use the input dataframe dl.
 #' @param dl A data frame with two or three columns: radiocarbon date BP, sigma, and optionally a calibration curve. Not used if L is specified. Default is to read from the clipboard.
@@ -18,7 +18,6 @@
 #' It can handle both deterministic sampling and bootstrapping to model variability in the input data. For sparse datasets, users should set `boot` to `TRUE` to ensure the model produced is not biased by unevenness in the input data.
 #' For large dataets this is unlikely to make a difference to the resulting density model, so for computational efficiency the direct sampling approach employed when `boot=FALSE` can be used.
 #'
-#'
 #' @examples
 #' # Calculate Gaussian KDE for a mixture of calibrated and calendar dates
 #' L1 <- rowcal(c(5310,5200,-3900, 5100), c(34,43,0.5, 30),
@@ -28,7 +27,7 @@
 #' plot(denmod)
 #'
 #' @seealso
-#' [`MCdensity`] [`plot.MCd`] [`density`] [`bw.nrd`]
+#' [`plot.MCd`] [`density`] [`bw.nrd`] [`rowcal`] [`MCsam.rowyears`]
 #' @author T. Rowan McLaughlin
 #' @importFrom stats density
 #' @importFrom utils txtProgressBar setTxtProgressBar
@@ -55,6 +54,7 @@ MCdensity <- function(L=NULL, dl=CLIP(), default_calcurve='intcal', N = 100, bw 
       out[, run] <- d$y
       utils::setTxtProgressBar(pb, run)
     }
+  close(pb)
   }
   else {
     sammatrix<-MCsam.rowyears(L,N)
@@ -63,7 +63,6 @@ MCdensity <- function(L=NULL, dl=CLIP(), default_calcurve='intcal', N = 100, bw 
     # Combine results
     out[, 2:(N + 1)] <- densities
   }
-  close(pb)
   class(out) <- 'MCd'
   attr(out,'N') <- length(L)
   return(out)
