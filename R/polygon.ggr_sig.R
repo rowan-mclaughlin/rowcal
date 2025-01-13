@@ -26,6 +26,8 @@
 #'
 #' @seealso \code{\link{ggrsignif}}, \code{\link{summary.ggr_sig}}
 #'
+#' @importFrom graphics polygon
+#'
 #' @noRd
 polygon <- function(x, ...) UseMethod("polygon")
 #' @noRd
