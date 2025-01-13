@@ -59,8 +59,8 @@ This function plots density models generated from Monte Carlo simulations of rad
 \examples{
 \dontrun{
 data(BIRE)
-IrD<-MCdensity(BIRE[which(BIRE$Where=='Ireland'),2:3])
-plot(IrD, xlim=c(-6300,-2500))
+IrD<-MCdensity(dl=BIRE[which(BIRE$Where=='Ireland'),2:3])
+plot(IrD, xlim=c(-6300,1500))
 }
 
 }

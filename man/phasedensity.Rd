@@ -4,16 +4,27 @@
 \alias{phasedensity}
 \title{Calculate Density Model for Radiocarbon Dates using Phase Binning}
 \usage{
-phasedensity(siteids, datelist, h = 30, ...)
+phasedensity(
+  siteids = NULL,
+  dates = NULL,
+  dl = NULL,
+  h = 30,
+  default_calcurve = "intcal",
+  ...
+)
 }
 \arguments{
 \item{siteids}{A vector of site identifiers for each date.}
 
-\item{datelist}{A list, typically of type \code{rowyears}, each element being a two-column matrix describing a probability distribution in time.}
+\item{dates}{A list, typically of type \code{rowyears}, each element being a two-column matrix describing a probability distribution in time.}
+
+\item{dl}{A data frame with four columns: siteid, radiocarbon date BP, sigma, and optionally a calibration curve. Not used if dates and siteids are specified.}
 
 \item{h}{The 'height' (i.e., length) of what is considered a unique phase. Default is 30 years.}
 
-\item{...}{Additional arguments to be passed to the \code{MCdensity.rowyears} function.}
+\item{default_calcurve}{The default calibration curve to use if none is specified in the input data frame. Default is 'intcal'.}
+
+\item{...}{Additional arguments to be passed to the \code{\link{MCdensity}} function, most importantly \code{bw}.}
 }
 \value{
 A matrix of type 'MCd' containing the density model for the radiocarbon dates.
@@ -22,8 +33,8 @@ A matrix of type 'MCd' containing the density model for the radiocarbon dates.
 This function calculates the Gaussian Kernel Density Estimation (KDE) model  for a set of radiocarbon dates using phase binning to select one date per phase.
 }
 \details{
-This function calculates a density model for a set of radiocarbon dates in the same manner as \code{mixdensity}. However, in addition, the data are parsed using hierarchal clustering.
-It first performs phase binning of radiocarbon dates using the \code{phasesam} function and then calculates the density model using the selected dates using either \code{mixdensity}, or \code{MCdensity} for cases where only one calibration curve is used, as \code{MCdensity} is slightly faster than \code{mixdensity}.
+This function calculates a density model for a set of radiocarbon dates in the same manner as \code{MCdensity}. However, in addition, the data are parsed using hierarchal clustering.
+It first performs phase binning of radiocarbon dates using the \code{phasesam} function and then calculates the density model using the selected dates using \code{MCdensity}.
 }
 \examples{
 \dontrun{

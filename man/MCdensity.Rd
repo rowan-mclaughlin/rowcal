@@ -30,7 +30,7 @@ MCdensity(
 A matrix containing the Gaussian Kernel Density Estimation for each Monte Carlo iteration, allowing summary statistics.
 }
 \description{
-This function calculates the Gaussian Kernel Density Estimation (KDE) for a list of two-column probability distributions, where each element represents a probability distribution (time, probability).
+This function calculates the Gaussian Kernel Density Estimation (KDE) for a list of radiocarbon dates, etc., where each element represents a probability distribution (time, probability). It can also call \code{rowcal} to calculate this list from input data in a single step.
 }
 \details{
 The MCdensity function computes a density estimate for a set of radiocarbon calibration curves or similar temporal data, either through bootstrapping or direct sampling.
@@ -52,7 +52,7 @@ plot(denmod)
 McLaughlin, T.R. 2019. On applications of space-time modelling with open-source 14C age calibration. Journal of Archaeological Method and Theory 26, 479–501. https://doi.org/10.1007/s10816-018-9381-3
 }
 \seealso{
-\code{\link{MCdensity}} \code{\link{plot.MCd}} \code{\link{density}} \code{\link{bw.nrd}}
+\code{\link{plot.MCd}} \code{\link{density}} \code{\link{bw.nrd}} \code{\link{rowcal}} \code{\link{MCsam.rowyears}}
 }
 \author{
 T. Rowan McLaughlin
