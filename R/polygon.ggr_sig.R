@@ -42,11 +42,11 @@ polygon.ggr_sig<-function(S, add=TRUE, colhigh='#FF000020', collow='#0000FF20') 
   }
   if(length(xlims_high) %% 2 == 1) xlims_high<-c(xlims_high, xmax)
   if(length(xlims_low) %% 2 == 1) xlims_low<-c(xlims_low, xmax)
-  polygon(
+  graphics::polygon(
     x=rep(xlims_high, each=2),
     y=rep(c(ylims,rev(ylims)),length(xlims_high)/2),
     col=colhigh, border=NA)
-  polygon(
+  graphics::polygon(
     x=rep(xlims_low, each=2),
     y=rep(c(ylims,rev(ylims)),length(xlims_low)/2),
     col=collow, border=NA)
