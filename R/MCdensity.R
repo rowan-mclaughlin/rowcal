@@ -38,7 +38,7 @@ MCdensity <- function(L=NULL, dl=CLIP(), default_calcurve='intcal', N = 100, bw 
   if(is.null(L)) {
     if(!is.data.frame(dl) || ncol(dl) < 2 || ncol(dl) > 3) stop("dl must be a two or three column table")
     if(ncol(dl)==2) dl$cc=default_calcurve
-    L<-rowcal(dl[,1],dl[,2],dl$cc)
+    L<-rowcal(dl[,1],dl[,2],dl[,3])
   }
   if(boot) L1 <- L
   x1 <- round(min(unlist(lapply(L, function(X) min(X[, 1])))))

@@ -22,8 +22,8 @@
 #' @examples
 #' \dontrun{
 #' data(BIRE)
-#' IrD<-MCdensity(BIRE[which(BIRE$Where=='Ireland'),2:3])
-#' plot(IrD, xlim=c(-6300,-2500))
+#' IrD<-MCdensity(dl=BIRE[which(BIRE$Where=='Ireland'),2:3])
+#' plot(IrD, xlim=c(-6300,1500))
 #'}
 #'
 #' @seealso [`battleship.MCd`], [`MCdensity`], [`phasedensity`], [`MCr.as.MCd`]
@@ -33,7 +33,7 @@ plot.MCd <- function(x, add = FALSE, col = 1, fill = '#00000022', scalefactor = 
   x[, 1] <- x[, 1] + Toffset
   if (smax) {
     M <- rowMeans(x[, -1], na.rm = TRUE)
-    scalefactor <- 1 / max(M)
+    scalefactor <- scalefactor * (1 / max(M))
   }
   M <- rowMeans(x[, -1], na.rm = TRUE) * scalefactor
   Sd <- apply(x[, -1], 1, stats::sd, na.rm = TRUE) * scalefactor * sigma
