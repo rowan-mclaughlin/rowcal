@@ -28,12 +28,6 @@
 #'
 #' @importFrom graphics polygon
 #'
-#' @noRd
-polygon <- function(x, ...) UseMethod("polygon")
-#' @noRd
-polygon.default <- graphics::polygon
-formals(polygon.default) <- c(formals(polygon.default), alist(... = ))
-
 #' @export
 polygon.ggr_sig<-function(S, add=TRUE, colhigh='#FF000020', collow='#0000FF20') {
   ylims<-par("usr")[3:4]
@@ -57,3 +51,9 @@ polygon.ggr_sig<-function(S, add=TRUE, colhigh='#FF000020', collow='#0000FF20') 
     y=rep(c(ylims,rev(ylims)),length(xlims_low)/2),
     col=collow, border=NA)
 }
+#' @noRd
+polygon <- function(x, ...) UseMethod("polygon")
+#' @noRd
+polygon.default <- graphics::polygon
+formals(polygon.default) <- c(formals(polygon.default), alist(... = ))
+
