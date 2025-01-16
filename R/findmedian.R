@@ -16,6 +16,7 @@
 #' @author T. Rowan McLaughlin
 #' @export
 findmedian <- function(L) {
+  if(length(L) == 1) L<-list(L)
   sapply(L, function(mat) {
     cumulative <- cumsum(mat[, 2])
     target <- max(cumulative) / 2
