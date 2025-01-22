@@ -23,5 +23,5 @@ ax <- function(side = 1, tick = 100, ticksize = -0.01, labels = NULL, ...) {
   ats <- pretty(par('usr')[1:2])
   if (is.null(labels)) labels <- c(abs(ats[which(ats < -1)]), ats[which(ats > -1)] + 1)
   axis(side, at = ats, labels = labels)
-  graphics::rug(seq(ats[1] - 500, ats[length(ats)] + 500, tick), ticksize = ticksize, side = side, quiet = TRUE, ...)
+  graphics::rug(seq(ats[1] - max(c(500,tick)), ats[length(ats)] + max(c(500,tick)), tick), ticksize = ticksize, side = side, quiet = TRUE, ...)
 }
