@@ -4,21 +4,23 @@
 #'
 #' @name rowyears_operations
 #'
-#' @aliases [.rowyears c.rowyear
+#' @aliases [.rowyears c.rowyears c.rowyear
 #'
 #' @param A A \code{rowyears} object
 #'
 #' @details
-#' Each function operates on objects of class \code{rowyearS}, `[` for the usual subsetting and `c()` for concatenation.
+#' Each function operates on objects of class \code{rowyears}, `[` for the usual subsetting and `c()` for concatenation.
 #'
 #' The functions return \code{rowyear} class and includes an updated \code{N} attribute.
 #'
 #' \describe{
-#'   \item{\code{[.rowyear}}{Subsetting for \code{rowyears} objects.}
-#'   \item{\code{C.rowyear}}{Concatenation for \code{rowyears} objects.}
+#'   \item{\code{[.rowyears}}{Subsetting for \code{rowyears} objects.}
+#'   \item{\code{c.rowyears}}{Concatenation for \code{rowyears} objects.}
+#'   \item{\code{c.rowyear}}{Re-direction to \code{c.rowyears} for \code{rowyear} objects.}
+#'
 #' }
 #'
-#' @return A \code{rowyears} object, represented as a list of two-column matrices.
+#' @return A \code{rowyears} object, represented as a list of two-column matrices. A subset of length 1 is a \code{rowyear} object, a single two-column matrix.
 #'
 #' @examples
 #' # Example rowyear objects
@@ -56,4 +58,10 @@ c.rowyears <- function(..., recursive = FALSE) {
   combined <- unlist(rowyears_list, recursive = FALSE)
   class(combined) <- "rowyears"
   return(combined)
+}
+
+# Define c.rowyear to redirect to c.rowyears
+#' @export
+c.rowyear <- function(..., recursive = FALSE) {
+  c.rowyears(...)
 }
