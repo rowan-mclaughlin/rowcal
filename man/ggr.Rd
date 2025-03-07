@@ -4,7 +4,7 @@
 \alias{ggr}
 \title{Compute Geometric Growth Rate from an 'MCd' Object}
 \usage{
-ggr(MCD, threshold = 0.000006)
+ggr(MCD, threshold = 6e-06)
 }
 \arguments{
 \item{MCD}{A matrix or data frame of class \code{'MCd'}, where the first column contains calendar years and subsequent columns represent density estimates.}
