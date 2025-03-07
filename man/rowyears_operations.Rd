@@ -3,6 +3,7 @@
 \name{rowyears_operations}
 \alias{rowyears_operations}
 \alias{[.rowyears}
+\alias{c.rowyears}
 \alias{c.rowyear}
 \title{Data Operations for 'rowyears' Objects}
 \usage{
@@ -12,19 +13,21 @@
 \item{A}{A \code{rowyears} object}
 }
 \value{
-A \code{rowyears} object, represented as a list of two-column matrices.
+A \code{rowyears} object, represented as a list of two-column matrices. A subset of length 1 is a \code{rowyear} object, a single two-column matrix.
 }
 \description{
 These functions allow subsetting and concatenation for objects of class \code{rowyears}.
 }
 \details{
-Each function operates on objects of class \code{rowyearS}, \code{[} for the usual subsetting and \code{c()} for concatenation.
+Each function operates on objects of class \code{rowyears}, \code{[} for the usual subsetting and \code{c()} for concatenation.
 
 The functions return \code{rowyear} class and includes an updated \code{N} attribute.
 
 \describe{
-\item{\code{[.rowyear}}{Subsetting for \code{rowyears} objects.}
-\item{\code{C.rowyear}}{Concatenation for \code{rowyears} objects.}
+\item{\code{[.rowyears}}{Subsetting for \code{rowyears} objects.}
+\item{\code{c.rowyears}}{Concatenation for \code{rowyears} objects.}
+\item{\code{c.rowyear}}{Re-direction to \code{c.rowyears} for \code{rowyear} objects.}
+
 }
 }
 \examples{
