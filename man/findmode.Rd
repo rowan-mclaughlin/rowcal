@@ -2,20 +2,18 @@
 % Please edit documentation in R/findmode.R
 \name{findmode}
 \alias{findmode}
-\title{Find the mode for Each Row in a list of calibrated dates}
+\title{Find the mode for each entry in a list of calibrated dates}
 \usage{
 findmode(L)
 }
 \arguments{
-\item{L}{A two-column list (radiocarbon determination BP, standard deviation) containing uncalibrated radiocarbon dates.}
-
-\item{...}{Additional arguments to be passed to the \code{rowcalmode} function.}
+\item{L}{A \code{rowyears} object}
 }
 \value{
 A vector containing the modal date for each element in the input.
 }
 \description{
-This function generates a best guess for a table of uncalibrated radiocarbon dates using the modal value.
+This function generates a best guess for a list of calibrated radiocarbon dates (or other \code{rowyears}-like objects) using the modal value.
 }
 \examples{
 L<-rowcal(date = c(-3800, 4990, 5300), sigma = c(10, 30, 50),

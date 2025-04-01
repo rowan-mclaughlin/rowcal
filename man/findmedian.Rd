@@ -4,25 +4,25 @@
 \alias{findmedian}
 \title{Find the median date for each row of a table of dates with different calibration curves.}
 \usage{
-findmedian(L)
+findmedian(dl = CLIP(), defaultcc = "intcal")
 }
 \arguments{
-\item{L}{A list of matrices containing radiocarbon determinations, calendar dates. Columns are: date, probablitiy.}
+\item{dl}{A two-or three column data fame containing radiocarbon determinations. Columns are: date, probablitiy, calibration curve. Default is to read from the clipboard.}
 }
 \value{
-A vector containing the median date of each element in the list provided.
+A vector containing the median date of each date.
 }
 \description{
-This function returns the 'median' date for a list of radiocarbon determinations. The median is calculated by finding the date that corresponds to the 50th percentile of the cumulative probability.
+This function returns the 'median' date for a list of radiocarbon determinations. It is a wrapper for \code{median.rowyears}. It is included for convinience, and to maintain compatibility with scripts used in some publications.
 }
 \examples{
-L<-rowcal(date = c(-3800, 4990, 5300), sigma = c(10, 30, 50),
-          cc = c('calcal', 'intcal', 'marine'))
-findmedian(L)
+findmedian( data.frame(dates=c(-3800, 4990, 5300),
+                       sigma = c(10, 30, 50),
+                       cc = c('calcal', 'intcal', 'marine'))
 
 }
 \seealso{
-\code{\link{rowcal}} \code{\link{findmode}} \code{\link{findwm}}
+\code{\link{rowcal}} \code{\link{findmode}} \code{\link{findwm}} \code{\link{median.rowyears}}
 }
 \author{
 T. Rowan McLaughlin

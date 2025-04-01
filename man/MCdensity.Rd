@@ -10,7 +10,8 @@ MCdensity(
   default_calcurve = "intcal",
   N = 100,
   bw = 30,
-  boot = FALSE
+  boot = FALSE,
+  roundout = 100
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ MCdensity(
 \item{bw}{bw The smoothing bandwidth for density estimation. Default is 30 years. Can also be a character string for automatic selection, ee ‘bw.nrd’.}
 
 \item{boot}{Logical. If TRUE, the function will perform a bootstrap resampling of the input data. Default is FALSE.}
+
+\item{roundout}{number of years to round out the density model at either end. Default is 100,}
 }
 \value{
 A matrix containing the Gaussian Kernel Density Estimation for each Monte Carlo iteration, allowing summary statistics.
