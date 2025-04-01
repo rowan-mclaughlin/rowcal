@@ -26,7 +26,7 @@
 #' # Example list of two-column matrices
 #' dates <- rowcal(date = c(4840, 4885, 4739, 4826, 4610),
 #'                 sigma = c(45, 50, 27, 24, 31))
-#' result <- sum.rowyears(dates)
+#' result <- sum(dates)
 #' plot(result)
 #'
 #' @author T. Rowan McLaughlin

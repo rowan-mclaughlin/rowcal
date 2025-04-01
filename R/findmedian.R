@@ -1,22 +1,24 @@
 #' Find the median date for each row of a table of dates with different calibration curves.
 #'
-#' This function returns the 'median' date for a list of radiocarbon determinations. The median is calculated by finding the date that corresponds to the 50th percentile of the cumulative probability.
+#' This function returns the 'median' date for a list of radiocarbon determinations. It is a wrapper for `median.rowyears`. It is included for convinience, and to maintain compatibility with scripts used in some publications.
 #'
-#' @param L A list of matrices containing radiocarbon determinations, calendar dates. Columns are: date, probablitiy.
+#' @param dl A two-or three column data fame containing radiocarbon determinations. Columns are: date, probablitiy, calibration curve. Default is to read from the clipboard.
 #'
-#' @return A vector containing the median date of each element in the list provided.
+#' @return A vector containing the median date of each date.
 #'
 #' @examples
-#' L<-rowcal(date = c(-3800, 4990, 5300), sigma = c(10, 30, 50),
-#'           cc = c('calcal', 'intcal', 'marine'))
-#' findmedian(L)
+#' findmedian( data.frame(dates=c(-3800, 4990, 5300),
+#'                        sigma = c(10, 30, 50),
+#'                        cc = c('calcal', 'intcal', 'marine'))
 #'
 #' @seealso
-#' [`rowcal`] [`findmode`] [`findwm`]
+#' [`rowcal`] [`findmode`] [`findwm`] [`median.rowyears`]
 #' @author T. Rowan McLaughlin
 #' @export
-findmedian <- function(L) {
-  if(length(L) == 1) L<-list(L)
+findmedian <- function(dl=CLIP(), defaultcc='intcal') {
+  if(ncol(dl)==2) dl$cc<-'intcal'
+  L<-rowcal(dl[,1], dl[,2], dl[,3])
+  if(class(L)=='rowyear') L<-list(L)
   sapply(L, function(mat) {
     cumulative <- cumsum(mat[, 2])
     target <- max(cumulative) / 2

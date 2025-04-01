@@ -8,6 +8,7 @@
 #' @param bw bw The smoothing bandwidth for density estimation. Default is 30 years. Can also be a character string for automatic selection, ee ‘bw.nrd’.
 #' @param N Number of Monte Carlo iterations. Default is 100.
 #' @param boot Logical. If TRUE, the function will perform a bootstrap resampling of the input data. Default is FALSE.
+#' @param roundout number of years to round out the density model at either end. Default is 100,
 #'
 #' @return A matrix containing the Gaussian Kernel Density Estimation for each Monte Carlo iteration, allowing summary statistics.
 #'
@@ -34,15 +35,15 @@
 #' @references
 #' McLaughlin, T.R. 2019. On applications of space-time modelling with open-source 14C age calibration. Journal of Archaeological Method and Theory 26, 479–501. https://doi.org/10.1007/s10816-018-9381-3
 #' @export
-MCdensity <- function(L=NULL, dl=CLIP(), default_calcurve='intcal', N = 100, bw = 30, boot=FALSE) {
+MCdensity <- function(L=NULL, dl=CLIP(), default_calcurve='intcal', N = 100, bw = 30, boot=FALSE, roundout=100) {
   if(is.null(L)) {
     if(!is.data.frame(dl) || ncol(dl) < 2 || ncol(dl) > 3) stop("dl must be a two or three column table")
     if(ncol(dl)==2) dl$cc=default_calcurve
     L<-rowcal(dl[,1],dl[,2],dl[,3])
   }
   if(boot) L1 <- L
-  x1 <- round(min(unlist(lapply(L, function(X) min(X[, 1])))))
-  x2 <- round(max(unlist(lapply(L, function(X) max(X[, 1])))))
+  x1 <- round(min(unlist(lapply(L, function(X) min(X[, 1])))))-roundout
+  x2 <- round(max(unlist(lapply(L, function(X) max(X[, 1])))))+roundout
   out <- matrix(nrow = 512, ncol = N + 1)
   out[, 1] <- seq(x1, x2, length.out = 512)
   if(boot){
