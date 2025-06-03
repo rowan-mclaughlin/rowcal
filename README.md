@@ -112,11 +112,11 @@ SPDboot:
 Fernández-López de Pablo, J., Gutiérres-Roig, M.,Gómez-Puche, M., Silva, F., McLaughlin, R., and Lozano, S. 2019. Palaeo-demographic modelling supports a population bottleneck during the Pleistocene-Holocene transition in Iberia. Nature Communications 10, 1872. http://doi.org/10.1038/s41467-019-09833-3
 
 Calibration curves:
-Reimer et al. 2020 \url{doi.org/doi/10.1017/RDC.2020.41}
-Heaton et al. 2020 \url{doi.org/doi/10.1017/RDC.2020.68}
+Reimer et al. 2020 http://doi.org/doi/10.1017/RDC.2020.41
+Heaton et al. 2020 http://doi.org/doi/10.1017/RDC.2020.68
 
 MCmoving:
-(in prep)
+McLaughlin, T. R., Robson, H. K., Maring, R., Boethius, A., Guiry, E., Groß, D., Koivisto, S., Philippsen, B., Andersen, S. H., Bailey, G., Milner, N. and Craig, O. E. 2025. Marine exploitation and the arrival of farming: resolving the paradox of the Mesolithic-Neolithic transition in Denmark. Quaternary Science Reviews 363: 109447. https://doi.org/10.1016/j.quascirev.2025.109447
 
 Published literature using these tools:
 
@@ -153,13 +153,15 @@ McLaughlin, R. 2023. Dating and Chronology. In Hartwell, B., Gormley, S., Brogan
 
 McLaughlin, R., Hannah, E., and Coyle-McClung, L. 2018. Frequency analyses of historical and archaeological datasets reveal the same pattern of declining sociocultural activity in 9th to 10th Century CE Ireland. Cliodynamics 9: 1–24. https://doi.org/10.21237/C7clio9136654 
 
+McLaughlin, T.R. 2019. On applications of space-time modelling with open-source 14C age calibration. Journal of Archaeological Method and Theory 26, 479–501.  https://doi.org/10.1007/s10816-018-9381-3 
+
 McLaughlin, T. R. 2020. An archaeology of Ireland for the Information Age: A reply to Baillie, Cassidy, Plunkett and Waddell. Emania 25, 61–66.
 
 McLaughlin, T. R. 2020. An archaeology of Ireland for the Information Age. Emania 25, 7–30.
 
 McLaughlin, T. R., Gómez-Puche, M., Cascalheira, J., Bicho, N. and Fernández-López de Pablo, J. 2021. Late Glacial and Early Holocene human demographic responses to climatic and environmental change in Atlantic Iberia. Philosophical Transactions of the Royal Society B 376, 20190724. https://dx.doi.org/10.1098/rstb.2019.0724 
 
-McLaughlin, T.R. 2019. On applications of space-time modelling with open-source 14C age calibration. Journal of Archaeological Method and Theory 26, 479–501.  https://doi.org/10.1007/s10816-018-9381-3 
+McLaughlin, T. R., Robson, H. K., Maring, R., Boethius, A., Guiry, E., Groß, D., Koivisto, S., Philippsen, B., Andersen, S. H., Bailey, G., Milner, N. and Craig, O. E. 2025. Marine exploitation and the arrival of farming: resolving the paradox of the Mesolithic-Neolithic transition in Denmark. Quaternary Science Reviews 363: 109447. https://doi.org/10.1016/j.quascirev.2025.109447
 
 McLaughlin, T.R., Whitehouse, N.J., Schulting, R.J., McClatchie, M., Barratt, P., and Bogaard, A. 2016. The changing face of Neolithic and Bronze Age Ireland: a big data approach to the settlement and burial archives. Journal of World Prehistory 29, 117-153.  https://doi.org/10.1007/s10963-016-9093-0
 
