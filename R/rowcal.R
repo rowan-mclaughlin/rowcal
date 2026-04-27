@@ -40,7 +40,7 @@
 #' rowcal(5000,30)
 #' # Calibrate the same date and also generate a probability distribution for a
 #' # date of 3700±1 BC
-#' rowcal(c(5000, -3700), c(30, 1))
+#' rowcal(c(5000, -3700), c(30, 1), c('intcal','calBCAD'))
 #' @author T. Rowan McLaughlin
 #' @references McLaughlin, T.R. 2019. On applications of space-time modelling with open-source 14C age calibration. Journal of Archaeological Method and Theory 26, 479–501. https://doi.org/10.1007/s10816-018-9381-3
 #' @export
@@ -68,10 +68,10 @@ rowcal<-function(date=NULL, sigma=NULL, cc=rep(default_calcurve,length(date)),dl
 
     #use linear approximation so that the first column is always in time steps of `res`
     if(sigma[i]<10) res<-0.1 #  increase res of the curve if required
-    calBP<-seq(min(curve[,1]),max(curve[,1]),res)
-    `14Cage`<-approx(curve[,1],curve[,2],xout=calBP)$y
-    Error<-approx(curve[,1],curve[,3],xout=calBP)$y
-    curve<-cbind(calBP,`14Cage`,Error)
+    BP_calendar<-seq(min(curve[,1]),max(curve[,1]),res)
+    `14Cage`<-approx(curve[,1],curve[,2],xout=BP_calendar)$y
+    Error<-approx(curve[,1],curve[,3],xout=BP_calendar)$y
+    curve<-cbind(BP_calendar,`14Cage`,Error)
 
     #convert from cal. BP to cal. BC if required
     if(BC==TRUE) curve[,1]<-1950-curve[,1]

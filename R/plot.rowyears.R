@@ -37,7 +37,7 @@
 #'               col=c(1,'#900','#900','#099','#FFF','#BBB',1),blcol=1,
 #'               xlim=c(-4000,-3400),xaxt='n'); ax()
 #' legend('topright',fill=c('#BBB','#FFF','#099','#900',1),
-#'   c(Uniform','Normal','Marine','IntCal','Sum'))
+#'   c('Uniform','Normal','Marine','IntCal','Sum'))
 #' text(-3900,c(0:6)/6+0.03,lab=c(NA,'4700±30 BP','4750±25 BP','5400±40 BP',
 #'                              '3600±75 cal BC','3750 to 3550 cal BC'))
 #'

@@ -33,7 +33,7 @@ phaser <- function(siteids, datelist, h = 30) {
     if(length(siteids)!=length(datelist)) stop("`siteids` must be the same length as the number of entries in `datelist`")
     #get unquie site codes & prepare output vector
    sites<-unique(siteids)
-   median_dates<-findmedian(datelist)
+   median_dates<-median(datelist)
    timebins <- rep(1, length(datelist))
    #loop through sites, apply cluster analysis
    for(i in 1:length(sites)) {

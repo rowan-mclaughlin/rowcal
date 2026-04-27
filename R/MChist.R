@@ -53,10 +53,10 @@ MChist<-function(datelist, bw=100, Nboot=100, plot=TRUE, xlab='Cal. BC/AD', col=
   upper_date<-round(max(unlist(lapply(datelist, function(X) max(X[, 1])))))
 
   # build a range of round numbers based on the required resolution 'res'
-  bins<-seq(round(lower_date,-round(log10(bw))),round(upper_date,-round(log10(bw))),by=bw)
+  bins<-seq(round(lower_date-bw,-round(log10(bw))),round(upper_date+bw,-round(log10(bw))),by=bw)
 
   # make temporary histogram structure and matrix for the bootstraps
-  A<-graphics::hist(findmedian(datelist), breaks=bins, plot=FALSE)
+  A<-graphics::hist(median(datelist), breaks=bins, plot=FALSE)
   midpoints<-A$mids
   out<-matrix(NA, nrow=length(midpoints), ncol=Nboot)
   rownames(out)<-midpoints
@@ -64,7 +64,7 @@ MChist<-function(datelist, bw=100, Nboot=100, plot=TRUE, xlab='Cal. BC/AD', col=
   # Do the bootstrap resampling via MCsam.rowyears
   pb <- utils::txtProgressBar(min=1,max=Nboot,initial=1)
   for(N in 1:Nboot) {
-       out[,N]<-graphics::hist(MCsam.rowyears(datelist),breaks=bins,plot=FALSE)$counts
+       out[,N]<-graphics::hist(MCsam(datelist),breaks=bins,plot=FALSE)$counts
        utils::setTxtProgressBar(pb,N)
   }
 

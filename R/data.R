@@ -26,14 +26,23 @@
 #' Heaton, T. J., Köhler, P., Butzin, M., Bard, E., Reimer, R. W., Austin, W. E. N., et al. (2020). Marine20—The Marine Radiocarbon Age Calibration Curve (0–55,000 cal BP). Radiocarbon, 62(4), 779–820. https://doi.org/10.1017/RDC.2020.68
 "marine"
 
-#' @title calcal: a dummy calibration curve for calendar ages from 50,000 BC to 2100 AD.
+#' @title calBCAD: a dummy calibration curve for calendar ages from 50,000 BC to 2100 AD.
 #' @format A data.frame with the following fields:
 #' \describe{
 #' \item{\code{calBP}}{Calendar age in years before AD 1950}
 #' \item{\code{BCAD}}{Calendar age in years BC/AD}
 #' \item{\code{Error}}{Age error (0)}
 #'}
-"calcal"
+"calBCAD"
+
+#' @title calBP: a dummy calibration curve for calendar ages from 50,000 BC to 2100 AD.
+#' @format A data.frame with the following fields:
+#' \describe{
+#' \item{\code{calBP}}{Calendar age in years before AD 1950}
+#' \item{\code{BP}}{Calendar age in years before AD 1950 (centered on midpoint)}
+#' \item{\code{Error}}{Age error (0)}
+#'}
+"calBP"
 
 #' Archaeological Radiocarbon Data: `BIRE`
 #'

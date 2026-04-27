@@ -16,12 +16,16 @@
 #' @author T. Rowan McLaughlin
 #' @export
 findmedian <- function(dl=CLIP(), defaultcc='intcal') {
-  if(ncol(dl)==2) dl$cc<-'intcal'
-  L<-rowcal(dl[,1], dl[,2], dl[,3])
-  if(class(L)=='rowyear') L<-list(L)
-  sapply(L, function(mat) {
-    cumulative <- cumsum(mat[, 2])
-    target <- max(cumulative) / 2
-    mat[which.min(abs(cumulative - target)), 1]
-  })
+  if(class(dl)=='rowyears') out<-median(dl)
+  else {
+     if(ncol(dl)==2) dl$cc<-'intcal'
+     L<-rowcal(dl[,1], dl[,2], dl[,3])
+     if(class(L)=='rowyear') L<-list(L)
+     out<-sapply(L, function(mat) {
+       cumulative <- cumsum(mat[, 2])
+       target <- max(cumulative) / 2
+       mat[which.min(abs(cumulative - target)), 1]
+     })
+     }
+  return(out)
 }

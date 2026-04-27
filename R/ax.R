@@ -1,4 +1,4 @@
-#' Draw Pretty Axes with Tickmarks
+#' Draw Pretty Axes with Tickmarks for calendar years
 #'
 #' This function draws axes with minor-interval tick marks and labels, allowing for customization of tick mark intervals and sizes.
 #'
@@ -7,6 +7,7 @@
 #' @param tick A numeric value specifying the interval between tick marks. Default is 100.
 #' @param ticksize A numeric value specifying the size of the tick marks. Default is -0.01 (negative values indicate a position below the axis).
 #' @param labs A character vector specifying the labels for the tick marks. If \code{NULL}, labels are automatically generated. Default is \code{NULL}.
+#' @param BC A logical value indicating whether to display calendar years to BC/AD format. Default is \code{TRUE}. Note that the function assumes the current plot is already in calendar time, so if \code{FALSE} the axis labels are given in years before 1950.
 #' @param ... Additional arguments to be passed to the `rug` function.
 
 #'
@@ -19,9 +20,10 @@
 #' @seealso [`rug`]
 #' @importFrom graphics rug
 #' @export
-ax <- function(side = 1, tick = 100, ticksize = -0.01, labels = NULL, ...) {
+ax <- function(side = 1, tick = 100, ticksize = -0.01, labels = NULL, BC=TRUE, ...) {
   ats <- pretty(par('usr')[1:2])
   if (is.null(labels)) labels <- c(abs(ats[which(ats < -1)]), ats[which(ats > -1)] + 1)
+  if(!BC) labels <- 1950 - labels
   axis(side, at = ats, labels = labels)
   graphics::rug(seq(ats[1] - max(c(500,tick)), ats[length(ats)] + max(c(500,tick)), tick), ticksize = ticksize, side = side, quiet = TRUE, ...)
 }
