@@ -84,7 +84,7 @@ plot(MCdensity(c(L1, L2)))
 
 ## Contributing
 
-email rowan.mclaughlin@mu.ie
+email rowan.mclaughlin@york.ac.uk
 
 ## Versioning
 
@@ -174,5 +174,7 @@ Parkinson, E.W., Stoddart, S., Sparacello, V. et al. Multiproxy bioarchaeologica
 Stoddart, S., Power, R., Thompson, J., Mercieca-Spiteri, B., McLaughlin, R., Pace, A. Parkinson, E., and Malone, C. (eds). 2022. Temple People: Bioarchaeology, resilience and culture in prehistoric Malta. McDonald Institute, Cambridge. ISBN 978-1-913344-08-5. https://doi.org/10.17863/CAM.91914 (476 pages).
 
 Thompson, J. E., Parkinson, E. W., McLaughlin, T. R., Barratt, R. P., Power, R. K., Mercieca-Spiteri, B., Stoddart, S., and Malone, C. 2020. Placing and remembering the dead in late Neolithic Malta: bioarchaeological and spatial analysis of the Xagħra Circle Hypogeum, Gozo. World Archaeology 52. https://doi.org/10.1080/00438243.2019.1745680
+
+Thompson, J. E., Panella, S., Soncin, S., McLaughlin, R. Tafuri, M. A., and Robb, J. E., 2026. Becoming post-Neolithic: Social Process and Transformation in Southern Italian Deathways. Proceedings of the Prehistoric Society. https://doi.org/10.1017/ppr.2026.10097
 
 
